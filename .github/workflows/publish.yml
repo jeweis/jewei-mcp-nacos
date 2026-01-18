@@ -2,22 +2,40 @@ name: Publish to PyPI
 
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*.*.*'
-  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get_version.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: |
+          ruff check src/
+          ruff format --check src/
+
+      - name: Type check
+        run: mypy src/
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -31,33 +49,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
 
-      - name: Generate version number
+      - name: Get version from tag
         id: get_version
         run: |
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            # 如果是标签推送，使用标签版本
-            VERSION="${GITHUB_REF#refs/tags/v}"
-            echo "Using tag version: $VERSION"
-          else
-            # 基于 2025 年的日期版本号 + 构建号
-            BASE_YEAR=2025
-            CURRENT_YEAR=$(date +%Y)
-            CURRENT_MONTH=$(date +%-m)
-            CURRENT_DAY=$(date +%-d)
-            BUILD_NUMBER=$(date +%H%M)
-
-            YEAR_OFFSET=$((CURRENT_YEAR - BASE_YEAR))
-
-            VERSION="${YEAR_OFFSET}.${CURRENT_MONTH}.${CURRENT_DAY}.${BUILD_NUMBER}"
-            echo "Generated version: $VERSION"
-          fi
+          VERSION="${GITHUB_REF#refs/tags/v}"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
 
       - name: Update version in pyproject.toml
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           sed -i "s|^version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
-          echo "Updated version to: $VERSION"
 
       - name: Build package
         run: python -m build
@@ -85,22 +87,3 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-
-  commit-version:
-    needs: [build, publish]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Update and commit version
-        run: |
-          VERSION="${{ needs.build.outputs.version }}"
-          sed -i "s|^version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pyproject.toml
-          git commit -m "chore: bump version to ${VERSION} [skip ci]" || echo "No changes to commit"
-          git push

@@ -61,7 +61,10 @@ class GetConfigInput(BaseModel):
     )
     namespace_id: Optional[str] = Field(
         default=None,
-        description="命名空间 ID，如 'dev'、'prod'。优先级：工具参数 > 环境变量 NACOS_NAMESPACE > 默认 public",
+        description=(
+            "命名空间 ID，如 'dev'、'prod'。"
+            "优先级：工具参数 > 环境变量 NACOS_NAMESPACE > 默认 public"
+        ),
     )
     response_format: ResponseFormat = Field(
         default=ResponseFormat.MARKDOWN,

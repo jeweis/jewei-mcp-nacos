@@ -1,12 +1,23 @@
 name: Publish to PyPI
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.VERSION }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,6 +30,34 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build twine
+
+      - name: Generate version number
+        id: get_version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            # 如果是标签推送，使用标签版本
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            echo "Using tag version: $VERSION"
+          else
+            # 基于 2025 年的日期版本号 + 构建号
+            BASE_YEAR=2025
+            CURRENT_YEAR=$(date +%Y)
+            CURRENT_MONTH=$(date +%-m)
+            CURRENT_DAY=$(date +%-d)
+            BUILD_NUMBER=$(date +%H%M)
+
+            YEAR_OFFSET=$((CURRENT_YEAR - BASE_YEAR))
+
+            VERSION="${YEAR_OFFSET}.${CURRENT_MONTH}.${CURRENT_DAY}.${BUILD_NUMBER}"
+            echo "Generated version: $VERSION"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update version in pyproject.toml
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          sed -i "s|version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
+          echo "Updated version to: $VERSION"
 
       - name: Build package
         run: python -m build
@@ -36,8 +75,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment: pypi
-    permissions:
-      id-token: write  # Required for trusted publishing
 
     steps:
       - name: Download artifacts
@@ -48,5 +85,22 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        # Uses trusted publishing, no API token needed
-        # Configure at: https://pypi.org/manage/project/{package}/settings/publishing/
+
+  commit-version:
+    needs: [build, publish]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update and commit version
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          sed -i "s|version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml
+          git commit -m "chore: bump version to ${VERSION} [skip ci]" || echo "No changes to commit"
+          git push

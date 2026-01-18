@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jewei-mcp-nacos"
-version = "0.1.0"
+version = "1.1.18.1120"
 description = "MCP Server for Nacos configuration management"
 readme = "README.md"
 license = "MIT"
@@ -48,13 +48,13 @@ packages = ["src/jewei_mcp_nacos"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "1.1.18.1120"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "1.1.18.1120"
 strict = true
 
 [tool.pytest.ini_options]

@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import Optional
+from typing import Any, Optional
 
 import httpx
 
@@ -84,7 +84,7 @@ class NacosClient:
         data_id: str,
         group_name: str = "DEFAULT_GROUP",
         namespace_id: Optional[str] = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """获取配置
 
         Args:
@@ -102,12 +102,12 @@ class NacosClient:
         token = await self._ensure_token()
         ns = self._get_namespace(namespace_id)
 
-        params: dict = {
+        params: dict[str, str] = {
             "dataId": data_id,
             "groupName": group_name,
             "namespaceId": ns,
         }
-        headers: dict = {}
+        headers: dict[str, str] = {}
         if token:
             headers["accessToken"] = token
 
@@ -119,12 +119,13 @@ class NacosClient:
                 timeout=30.0,
             )
             response.raise_for_status()
-            result = response.json()
+            result: dict[str, Any] = response.json()
 
             if result.get("code") != 0:
                 raise Exception(result.get("message", "Unknown error"))
 
-            return result.get("data", {})
+            data: dict[str, Any] = result.get("data", {})
+            return data
 
     async def publish_config(
         self,
@@ -155,7 +156,7 @@ class NacosClient:
         token = await self._ensure_token()
         ns = self._get_namespace(namespace_id)
 
-        params: dict = {
+        params: dict[str, str] = {
             "dataId": data_id,
             "groupName": group_name,
             "namespaceId": ns,
@@ -165,7 +166,7 @@ class NacosClient:
         if desc:
             params["desc"] = desc
 
-        headers: dict = {}
+        headers: dict[str, str] = {}
         if token:
             headers["accessToken"] = token
 
@@ -177,12 +178,13 @@ class NacosClient:
                 timeout=30.0,
             )
             response.raise_for_status()
-            result = response.json()
+            result: dict[str, Any] = response.json()
 
             if result.get("code") != 0:
                 raise Exception(result.get("message", "Unknown error"))
 
-            return result.get("data", False)
+            success: bool = result.get("data", False)
+            return success
 
 
 # 全局客户端实例

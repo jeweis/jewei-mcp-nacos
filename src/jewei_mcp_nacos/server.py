@@ -130,16 +130,7 @@ def handle_error(e: Exception) -> str:
     return f"错误：{type(e).__name__}: {str(e)}"
 
 
-@mcp.tool(
-    name="nacos_get_config",
-    annotations={
-        "title": "获取 Nacos 配置",
-        "readOnlyHint": True,
-        "destructiveHint": False,
-        "idempotentHint": True,
-        "openWorldHint": True,
-    },
-)
+@mcp.tool(name="nacos_get_config")
 async def nacos_get_config(params: GetConfigInput) -> str:
     """获取 Nacos 配置内容。
 
@@ -209,16 +200,7 @@ _read_only = os.getenv("NACOS_READ_ONLY", "false").lower() == "true"
 
 if not _read_only:
 
-    @mcp.tool(
-        name="nacos_publish_config",
-        annotations={
-            "title": "发布 Nacos 配置",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
-    )
+    @mcp.tool(name="nacos_publish_config")
     async def nacos_publish_config(params: PublishConfigInput) -> str:
         """发布 Nacos 配置。
 
@@ -268,13 +250,7 @@ if not _read_only:
 
 def main() -> None:
     """MCP Server 入口点"""
-    transport = os.getenv("MCP_TRANSPORT", "stdio")
-
-    if transport == "streamable_http":
-        port = int(os.getenv("MCP_PORT", "8000"))
-        mcp.run(transport="streamable-http", port=port)
-    else:
-        mcp.run()
+    mcp.run()
 
 
 if __name__ == "__main__":

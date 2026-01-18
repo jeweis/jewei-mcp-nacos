@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jewei-mcp-nacos"
-version = "1.1.18.1122"
+version = "1.1.18.1125"
 description = "MCP Server for Nacos configuration management"
 readme = "README.md"
 license = "MIT"

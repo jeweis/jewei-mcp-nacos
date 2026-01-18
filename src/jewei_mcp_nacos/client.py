@@ -107,13 +107,15 @@ class NacosClient:
             "groupName": group_name,
             "namespaceId": ns,
         }
+        headers: dict = {}
         if token:
-            params["accessToken"] = token
+            headers["accessToken"] = token
 
         async with httpx.AsyncClient() as client:
             response = await client.get(
                 f"{self.console_base_url}/v3/console/cs/config",
                 params=params,
+                headers=headers,
                 timeout=30.0,
             )
             response.raise_for_status()
@@ -153,22 +155,25 @@ class NacosClient:
         token = await self._ensure_token()
         ns = self._get_namespace(namespace_id)
 
-        data: dict = {
+        params: dict = {
             "dataId": data_id,
             "groupName": group_name,
             "namespaceId": ns,
             "content": content,
             "type": config_type,
         }
-        if token:
-            data["accessToken"] = token
         if desc:
-            data["desc"] = desc
+            params["desc"] = desc
+
+        headers: dict = {}
+        if token:
+            headers["accessToken"] = token
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{self.console_base_url}/v3/console/cs/config",
-                data=data,
+                params=params,
+                headers=headers,
                 timeout=30.0,
             )
             response.raise_for_status()

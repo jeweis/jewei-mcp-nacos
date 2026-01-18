@@ -32,9 +32,32 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
 }
 ```
 
-### Windsurf
+### Cursor
 
-在 `~/.codeium/windsurf/mcp_config.json` 中添加：
+在 `~/.cursor/mcp.json` 中添加：
+
+```json
+{
+  "mcpServers": {
+    "nacos": {
+      "command": "uvx",
+      "args": ["jewei-mcp-nacos"],
+      "env": {
+        "NACOS_HOST": "localhost",
+        "NACOS_API_PORT": "8848",
+        "NACOS_CONSOLE_PORT": "8080",
+        "NACOS_NAMESPACE": "dev",
+        "NACOS_VERSION": "3",
+        "NACOS_READ_ONLY": "false"
+      }
+    }
+  }
+}
+```
+
+### OpenCode
+
+在 `~/.opencode/mcp.json` 中添加：
 
 ```json
 {

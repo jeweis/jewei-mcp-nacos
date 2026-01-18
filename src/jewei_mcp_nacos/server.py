@@ -220,13 +220,16 @@ if not _read_only:
 
     @mcp.tool(
         name="nacos_publish_config",
-        annotations=cast(Any, {
-            "title": "发布 Nacos 配置",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        }),
+        annotations=cast(
+            Any,
+            {
+                "title": "发布 Nacos 配置",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": True,
+            },
+        ),
     )
     async def nacos_publish_config(params: PublishConfigInput) -> str:
         """发布 Nacos 配置。

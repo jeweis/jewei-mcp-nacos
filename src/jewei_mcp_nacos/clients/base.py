@@ -17,8 +17,7 @@ class NacosClientProtocol(Protocol):
         data_id: str,
         group_name: str = "DEFAULT_GROUP",
         namespace_id: Optional[str] = None,
-    ) -> dict[str, Any]:
-        ...
+    ) -> dict[str, Any]: ...
 
     async def publish_config(
         self,
@@ -28,8 +27,7 @@ class NacosClientProtocol(Protocol):
         namespace_id: Optional[str] = None,
         config_type: str = "yaml",
         desc: Optional[str] = None,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
 
 class NacosAuthBase:

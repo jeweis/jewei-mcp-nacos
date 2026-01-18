@@ -13,7 +13,6 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field
 
-
 from .client import get_nacos_client
 
 # 创建 MCP Server

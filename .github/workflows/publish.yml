@@ -56,7 +56,7 @@ jobs:
       - name: Update version in pyproject.toml
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
-          sed -i "s|version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
+          sed -i "s|^version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
           echo "Updated version to: $VERSION"
 
       - name: Build package
@@ -97,7 +97,7 @@ jobs:
       - name: Update and commit version
         run: |
           VERSION="${{ needs.build.outputs.version }}"
-          sed -i "s|version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
+          sed -i "s|^version = \"[^\"]*\"|version = \"${VERSION}\"|" pyproject.toml
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

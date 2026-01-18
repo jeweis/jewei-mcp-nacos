@@ -57,15 +57,17 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
 
 ### OpenCode
 
-在 `~/.opencode/mcp.json` 中添加：
+在 `~/.opencode/opencode.json` 中添加：
 
 ```json
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "nacos": {
-      "command": "uvx",
-      "args": ["jewei-mcp-nacos"],
-      "env": {
+      "type": "local",
+      "command": ["uvx", "jewei-mcp-nacos"],
+      "enabled": true,
+      "environment": {
         "NACOS_HOST": "localhost",
         "NACOS_API_PORT": "8848",
         "NACOS_CONSOLE_PORT": "8080",

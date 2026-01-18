@@ -90,7 +90,7 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
 | `NACOS_CONSOLE_PORT` | Console 端口（用于配置操作，仅 v3 使用，v3 必填） | `8080` |
 | `NACOS_USERNAME` | 用户名（可选） | - |
 | `NACOS_PASSWORD` | 密码（可选） | - |
-| `NACOS_NAMESPACE` | 默认命名空间 ID | `public` |
+| `NACOS_NAMESPACE` | 默认命名空间 ID（当 NACOS_VERSION=1 时表示 Nacos 的命名空间 ID 字段） | `public` |
 | `NACOS_VERSION` | Nacos 版本（1/2/3），默认 3 | `3` |
 | `NACOS_READ_ONLY` | 只读模式，禁用发布功能 | `false` |
 

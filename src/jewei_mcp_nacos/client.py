@@ -124,7 +124,7 @@ class NacosClient:
             if result.get("code") != 0:
                 raise Exception(result.get("message", "Unknown error"))
 
-            data: dict[str, Any] = result.get("data", {})
+            data: dict[str, Any] = result.get("data") or {}
             return data
 
     async def publish_config(

@@ -153,6 +153,11 @@ async def nacos_get_config(params: GetConfigInput) -> str:
             namespace_id=params.namespace_id,
         )
 
+        # 配置不存在
+        if not data or not data.get("content"):
+            ns = params.namespace_id or nacos_client.default_namespace
+            return f"配置不存在：dataId={params.data_id}, group={params.group_name}, namespace={ns}"
+
         if params.response_format == ResponseFormat.JSON:
             return json.dumps(
                 {

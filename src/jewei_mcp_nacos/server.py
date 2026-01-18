@@ -7,13 +7,14 @@
 import json
 import os
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional, cast
 
 import httpx
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field
 
-from .client import nacos_client
+
+from .client import get_nacos_client
 
 # 创建 MCP Server
 mcp = FastMCP("nacos_mcp")
@@ -130,7 +131,19 @@ def handle_error(e: Exception) -> str:
     return f"错误：{type(e).__name__}: {str(e)}"
 
 
-@mcp.tool(name="nacos_get_config")
+@mcp.tool(
+    name="nacos_get_config",
+    annotations=cast(
+        Any,
+        {
+            "title": "获取 Nacos 配置",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
+    ),
+)
 async def nacos_get_config(params: GetConfigInput) -> str:
     """获取 Nacos 配置内容。
 
@@ -147,6 +160,7 @@ async def nacos_get_config(params: GetConfigInput) -> str:
         配置内容（Markdown 或 JSON 格式）
     """
     try:
+        nacos_client = await get_nacos_client()
         data = await nacos_client.get_config(
             data_id=params.data_id,
             group_name=params.group_name,
@@ -205,7 +219,16 @@ _read_only = os.getenv("NACOS_READ_ONLY", "false").lower() == "true"
 
 if not _read_only:
 
-    @mcp.tool(name="nacos_publish_config")
+    @mcp.tool(
+        name="nacos_publish_config",
+        annotations=cast(Any, {
+            "title": "发布 Nacos 配置",
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        }),
+    )
     async def nacos_publish_config(params: PublishConfigInput) -> str:
         """发布 Nacos 配置。
 
@@ -224,6 +247,7 @@ if not _read_only:
             发布结果
         """
         try:
+            nacos_client = await get_nacos_client()
             success = await nacos_client.publish_config(
                 data_id=params.data_id,
                 content=params.content,

@@ -2,7 +2,7 @@
 
 Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
 
-支持 Nacos 3.x 版本。
+支持 Nacos 1.x/2.x/3.x 版本。
 
 ## 快速开始
 
@@ -23,29 +23,9 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
         "NACOS_CONSOLE_PORT": "8080",
         "NACOS_USERNAME": "nacos",
         "NACOS_PASSWORD": "your-password",
-        "NACOS_NAMESPACE": "dev"
-      }
-    }
-  }
-}
-```
-
-### Cursor
-
-在 `~/.cursor/mcp.json` 中添加：
-
-```json
-{
-  "mcpServers": {
-    "nacos": {
-      "command": "uvx",
-      "args": ["jewei-mcp-nacos"],
-      "env": {
-        "NACOS_HOST": "localhost",
-        "NACOS_API_PORT": "8848",
-        "NACOS_CONSOLE_PORT": "8080",
-        "NACOS_USERNAME": "nacos",
-        "NACOS_PASSWORD": "your-password"
+        "NACOS_NAMESPACE": "dev",
+        "NACOS_VERSION": "3",
+        "NACOS_READ_ONLY": "false"
       }
     }
   }
@@ -65,7 +45,10 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
       "env": {
         "NACOS_HOST": "localhost",
         "NACOS_API_PORT": "8848",
-        "NACOS_CONSOLE_PORT": "8080"
+        "NACOS_CONSOLE_PORT": "8080",
+        "NACOS_NAMESPACE": "dev",
+        "NACOS_VERSION": "3",
+        "NACOS_READ_ONLY": "false"
       }
     }
   }
@@ -87,7 +70,10 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
         "NACOS_API_PORT": "8848",
         "NACOS_CONSOLE_PORT": "8080",
         "NACOS_USERNAME": "nacos",
-        "NACOS_PASSWORD": "your-password"
+        "NACOS_PASSWORD": "your-password",
+        "NACOS_NAMESPACE": "dev",
+        "NACOS_VERSION": "3",
+        "NACOS_READ_ONLY": "false"
       }
     }
   }
@@ -99,11 +85,13 @@ Nacos MCP Server - 让 AI 助手能够查询和管理 Nacos 配置。
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
 | `NACOS_HOST` | Nacos 服务地址 | `localhost` |
-| `NACOS_API_PORT` | API 端口（用于登录） | `8848` |
-| `NACOS_CONSOLE_PORT` | Console 端口（用于配置操作） | `8080` |
+| `NACOS_PORT` | API 端口（仅 v1/v2 使用，v1/v2 必填） | `8848` |
+| `NACOS_API_PORT` | API 端口（用于登录，仅 v3 使用，v3 必填） | `8848` |
+| `NACOS_CONSOLE_PORT` | Console 端口（用于配置操作，仅 v3 使用，v3 必填） | `8080` |
 | `NACOS_USERNAME` | 用户名（可选） | - |
 | `NACOS_PASSWORD` | 密码（可选） | - |
 | `NACOS_NAMESPACE` | 默认命名空间 ID | `public` |
+| `NACOS_VERSION` | Nacos 版本（1/2/3），默认 3 | `3` |
 | `NACOS_READ_ONLY` | 只读模式，禁用发布功能 | `false` |
 
 ## 可用工具

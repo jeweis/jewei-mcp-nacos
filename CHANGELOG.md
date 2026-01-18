@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-01-18
+
+### Added
+
+- 支持 Nacos 1.x/2.x/3.x 版本，按版本选择客户端实现
+- 新增版本配置与端口环境变量说明，补充示例配置
+
+### Changed
+
+- 客户端实现拆分为多文件结构，便于维护扩展
+- 默认使用 v3，v1/v2 需显式指定版本
+
 ## [0.1.0] - 2025-01-18
 
 ### Added
